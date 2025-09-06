@@ -8,6 +8,14 @@ using Serilog;
 
 try
 {
+    Console.WriteLine("DOTNET_ENVIRONMENT: " + Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"));
+
+    var configuration = new ConfigurationBuilder()
+        .SetBasePath(Environment.CurrentDirectory)
+        .AddJsonFile("appsettings.json", optional: true)
+        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")}.json", optional: true)
+        .Build();
+
     var builder = WebApplication.CreateBuilder(args);
     builder.AddSerilog("Worker MassTransit");
     Log.Information("Starting Worker");
@@ -16,8 +24,9 @@ try
         .UseSerilog(Log.Logger)
         .ConfigureServices((context, collection) =>
         {
-            var appSettings = new AppSettings();
+            AppSettings appSettings = new AppSettings();
             context.Configuration.Bind(appSettings);
+            context.Configuration.Bind(configuration);
             collection.AddOpenTelemetry(appSettings);
             collection.AddHttpContextAccessor();
 
@@ -40,9 +49,8 @@ try
                     cfg.ServiceInstance(instance =>
                     {
                         instance.ConfigureJobServiceEndpoints();
-						instance.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter("dev", false));
-
-					});
+                        instance.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter("dev", false));
+                    });
                 });
             });
         }).Build();
