@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: masstransit-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: masstransit
+  template:
+    metadata:
+      labels:
+        app: masstransit
+    spec:
+      containers:
+        - image: mrstefangrimm/masstransit-worker:0.1
+          name: webapi
+          env:
+            - name: DOTNET_ENVIRONMENT
+              value: kubernetes
