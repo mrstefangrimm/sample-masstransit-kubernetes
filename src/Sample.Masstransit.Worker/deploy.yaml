@@ -22,12 +22,10 @@ spec:
             - name: DOTNET_ENVIRONMENT
               value: kubernetes
           resources: {}
-
-volumeMounts:
-- name: config-volume
-  mountPath: /app/config
-
-volumes:
-- name: config-volume
-  configMap:
-    name: worker-appsettings-config
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: worker-appsettings-config

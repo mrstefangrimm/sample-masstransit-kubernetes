@@ -24,12 +24,10 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: kubernetes
           resources: {}
-
-volumeMounts:
-- name: config-volume
-  mountPath: /app/config
-
-volumes:
-- name: config-volume
-  configMap:
-    name: webpapi-appsettings-config
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: webpapi-appsettings-config
