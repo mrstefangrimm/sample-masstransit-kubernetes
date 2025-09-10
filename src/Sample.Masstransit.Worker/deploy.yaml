@@ -16,7 +16,7 @@ spec:
         app: masstransit-worker
     spec:
       containers:
-        - image: mrstefangrimm/masstransit-worker:0.4
+        - image: mrstefangrimm/masstransit-worker:0.5
           name: masstransit-worker
           env:
             - name: DOTNET_ENVIRONMENT

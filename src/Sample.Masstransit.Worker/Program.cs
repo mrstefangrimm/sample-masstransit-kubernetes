@@ -15,16 +15,17 @@ try
     if (Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "kubernetes")
     {
         configuration = new ConfigurationBuilder()
+            .AddJsonFile("/app/appsettings.json", optional: true)
             .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
             .Build();
     }
     else
-    {    
+    {
         configuration = new ConfigurationBuilder()
-          .SetBasePath(Environment.CurrentDirectory)
-          .AddJsonFile("appsettings.json", optional: true)
-          .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")}.json", optional: true)
-          .Build();
+            //.SetBasePath(Environment.CurrentDirectory)
+            .AddJsonFile("/app/appsettings.json", optional: true)
+            .AddJsonFile($"/app/appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")}.json", optional: true)
+            .Build();
     }
 
     var builder = WebApplication.CreateBuilder(args);

@@ -16,7 +16,7 @@ spec:
         app: masstransit-webapi
     spec:
       containers:
-        - image: mrstefangrimm/masstransit-webapi:0.4
+        - image: mrstefangrimm/masstransit-webapi:0.8
           name: masstransit-webapi
           ports:
             - containerPort: 8080
@@ -30,4 +30,4 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: webpapi-appsettings-config
+            name: webapi-appsettings-config

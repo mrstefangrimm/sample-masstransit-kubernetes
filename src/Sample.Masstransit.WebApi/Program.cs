@@ -14,21 +14,23 @@ try
 
     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "kubernetes")
     {
-        configuration = new ConfigurationBuilder()
-          .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+      configuration = new ConfigurationBuilder()
+          .AddJsonFile("/app/appsettings.json", optional: true)
+          .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
           .Build();
     }
     else
-    {    
-      configuration = new ConfigurationBuilder()
-        .SetBasePath(Environment.CurrentDirectory)
-        .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
-        .Build();
+    {
+    configuration = new ConfigurationBuilder()
+            //.SetBasePath(Environment.CurrentDirectory)
+            .AddJsonFile("/app/appsettings.json", optional: true)
+            .AddJsonFile($"/app/appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+            .Build();
     }
 
     var appSettings = new AppSettings();
-    builder.Configuration.Bind(appSettings);
-    builder.Configuration.Bind(configuration);
+        builder.Configuration.Bind(appSettings);
+        builder.Configuration.Bind(configuration);
 
     builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
