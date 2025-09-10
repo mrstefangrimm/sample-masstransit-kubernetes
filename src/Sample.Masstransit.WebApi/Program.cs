@@ -10,11 +10,21 @@ try
     builder.AddSerilog("API MassTransit");
     Log.Information("Starting API");
 
-    var configuration = new ConfigurationBuilder()
-      .SetBasePath(Environment.CurrentDirectory)
-      .AddJsonFile("appsettings.json", optional: true)
-      .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
-      .Build();
+    IConfiguration? configuration = null;
+
+    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "kubernetes")
+    {
+        configuration = new ConfigurationBuilder()
+          .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+          .Build();
+    }
+    else
+    {    
+      configuration = new ConfigurationBuilder()
+        .SetBasePath(Environment.CurrentDirectory)
+        .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
+        .Build();
+    }
 
     var appSettings = new AppSettings();
     builder.Configuration.Bind(appSettings);
@@ -53,3 +63,14 @@ finally
     Log.Information("Server Shutting down...");
     Log.CloseAndFlush();
 }
+
+//static IHostBuilder CreateHostBuilder(string[] args) =>
+//    Host.CreateDefaultBuilder(args)
+//        .ConfigureAppConfiguration((context, config) =>
+//        {
+//            config.AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: false);
+//        })
+//        .ConfigureWebHostDefaults(webBuilder =>
+//        {
+//            webBuilder.UseStartup<Startup>();
+//        });

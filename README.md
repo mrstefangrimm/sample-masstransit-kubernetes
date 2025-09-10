@@ -132,9 +132,15 @@ Install
 
    Note: not sure if that is required for this example
 
+4. `kubectl create namespace messaging`
+
+5. `kubectl create namespace sample`
+
 4. `kubectl create deployment rabbitmq --image=rabbitmq:3.13.7`
 
    rabbitmq should be seen in Workloads/Deployments
+
+4. `kubectl create -f .\rabbitmq-service.yaml`
 
 5. `kubectl create -f .\src\Sample.Masstransit.WebApi\deploy.yaml`
 

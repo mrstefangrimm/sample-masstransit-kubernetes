@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: worker-appsettings-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft": "Warning"
+        }
+      },
+      "ConnectionStrings": {
+        "RabbitMq": "amqp://guest:guest@rabbitmq.messaging.svc.cluster.local:5672"
+      },
+      "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+      "DistributedTracing": {
+        "IsEnabled": true,
+        "Jaeger": {
+          "ServiceName": "API Sample"
+        }
+      },
+      "AllowedHosts": "*"
+    }
+
+# Usage
+# kubectl apply -f configmap.yaml

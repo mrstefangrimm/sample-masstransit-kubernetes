@@ -10,11 +10,22 @@ try
 {
     Console.WriteLine("DOTNET_ENVIRONMENT: " + Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"));
 
-    var configuration = new ConfigurationBuilder()
-        .SetBasePath(Environment.CurrentDirectory)
-        .AddJsonFile("appsettings.json", optional: true)
-        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")}.json", optional: true)
-        .Build();
+    IConfiguration? configuration = null;
+
+    if (Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "kubernetes")
+    {
+        configuration = new ConfigurationBuilder()
+            .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
+            .Build();
+    }
+    else
+    {    
+        configuration = new ConfigurationBuilder()
+          .SetBasePath(Environment.CurrentDirectory)
+          .AddJsonFile("appsettings.json", optional: true)
+          .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")}.json", optional: true)
+          .Build();
+    }
 
     var builder = WebApplication.CreateBuilder(args);
     builder.AddSerilog("Worker MassTransit");

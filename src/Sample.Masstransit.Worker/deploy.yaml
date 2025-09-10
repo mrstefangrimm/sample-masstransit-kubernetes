@@ -1,20 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: sample
   name: masstransit-worker
+  labels:
+    app: worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: masstransit
+      app: masstransit-worker
   template:
     metadata:
       labels:
-        app: masstransit
+        app: masstransit-worker
     spec:
       containers:
-        - image: mrstefangrimm/masstransit-worker:0.1
-          name: webapi
+        - image: mrstefangrimm/masstransit-worker:0.4
+          name: masstransit-worker
           env:
             - name: DOTNET_ENVIRONMENT
               value: kubernetes
+          resources: {}
+
+volumeMounts:
+- name: config-volume
+  mountPath: /app/config
+
+volumes:
+- name: config-volume
+  configMap:
+    name: worker-appsettings-config
