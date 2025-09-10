@@ -136,7 +136,7 @@ Install
 
 5. `kubectl create namespace sample`
 
-4. `kubectl create deployment rabbitmq --image=rabbitmq:3.13.7`
+4. `kubectl create deployment rabbitmq --namespace=messaging --image=rabbitmq:3.13.7`
 
    rabbitmq should be seen in Workloads/Deployments
 
