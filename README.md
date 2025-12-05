@@ -118,7 +118,6 @@ Test
 Required
 
 - minikube
-- docker containers rabbitmq, masstransit-webapi, masstransit-worker stopped
 
 Install
 
@@ -132,29 +131,43 @@ Install
 
    Note: not sure if that is required for this example
 
-4. `kubectl create deployment rabbitmq --image=rabbitmq:3.13.7`
+4. `kubectl create namespace messaging`
+
+5. `kubectl create namespace sample`
+
+4. `kubectl create deployment rabbitmq --namespace=messaging --image=rabbitmq:3.13.7-management`
 
    rabbitmq should be seen in Workloads/Deployments
 
-5. `kubectl create -f .\src\Sample.Masstransit.WebApi\deploy.yaml`
+4. `kubectl apply -f .\rabbitmq-service.yaml`
+
+4. `kubectl apply -f .\src\Sample.Masstransit.WebApi\configmap.yaml`
+
+   webapi-appsettings-config should be visible in Config and Storage
+
+6. `kubectl apply -f .\src\Sample.Masstransit.WebApi\deploy.yaml`
 
    masstransit-webapi should be seen in Workloads\Deployments
 
-6. `kubectl create -f .\src\Sample.Masstransit.WebApi\service.yaml`
+7. `kubectl apply -f .\src\Sample.Masstransit.WebApi\service.yaml`
 
    webapi should be seen in Service\Services
 
-7. `kubectl create -f .\src\Sample.Masstransit.Worker\deploy.yaml`
+7. `kubectl apply -f .\src\Sample.Masstransit.Worker\configmap.yaml`
+
+   worker-appsettings-config should be visible in Config and Storage
+
+9. `kubectl apply -f .\src\Sample.Masstransit.Worker\deploy.yaml`
 
     masstransit-worker should be seen in Workloads\Deployments
     
-8. `start minikube tunnel`
+10. `start minikube tunnel`
 
     webapi should become status green in Service\Services
 
-9. Open http://localhost:8080/swagger/
+11. Open http://localhost:8080/swagger/
 
-10. In the Swagger UI, execute a "/client post"
+12. In the Swagger UI, execute a "/client post"
 
     Log line in Workloads\Pods\masstransit-webapi-<id> should be "Evento enviado: ClientInsertedEvent - string - string"
 

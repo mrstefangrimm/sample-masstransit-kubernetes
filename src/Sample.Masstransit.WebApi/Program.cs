@@ -4,21 +4,23 @@ using Serilog;
 
 try
 {
-    Console.WriteLine("ASPNETCORE_ENVIRONMENT: " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
-
     var builder = WebApplication.CreateBuilder(args);
     builder.AddSerilog("API MassTransit");
     Log.Information("Starting API");
+    Log.Information("ASPNETCORE_ENVIRONMENT: " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
 
-    var configuration = new ConfigurationBuilder()
-      .SetBasePath(Environment.CurrentDirectory)
-      .AddJsonFile("appsettings.json", optional: true)
-      .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
-      .Build();
+    builder.Configuration
+        .AddJsonFile($"/app/appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+        .AddJsonFile("/config/appsettings.json", optional: true, reloadOnChange: true)
+        .Build();
 
     var appSettings = new AppSettings();
     builder.Configuration.Bind(appSettings);
-    builder.Configuration.Bind(configuration);
+
+    foreach (var kvp in builder.Configuration.AsEnumerable())
+    {
+        Log.Debug($"{kvp.Key} = {kvp.Value}");
+    }
 
     builder.Services.AddRouting(options => options.LowercaseUrls = true);
 

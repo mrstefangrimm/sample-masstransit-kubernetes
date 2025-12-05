@@ -4,7 +4,7 @@ metadata:
   labels:
     run: webapi
   name: webapi
-  namespace: default
+  namespace: sample
 spec:
   ports:
     - name: swaggergateway
@@ -12,5 +12,5 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    app: masstransit
+    app: masstransit-webapi
   type: LoadBalancer

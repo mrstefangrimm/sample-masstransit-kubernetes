@@ -1,22 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: sample
   name: masstransit-webapi
+  labels:
+    app: webapi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: masstransit
+      app: masstransit-webapi
   template:
     metadata:
       labels:
-        app: masstransit
+        app: masstransit-webapi
     spec:
       containers:
-        - image: mrstefangrimm/masstransit-webapi:0.2
-          name: webapi
+        - image: mrstefangrimm/masstransit-webapi:latest
+          name: masstransit-webapi
           ports:
             - containerPort: 8080
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: kubernetes
+          resources: {}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: webapi-appsettings-config

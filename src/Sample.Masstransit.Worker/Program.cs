@@ -8,17 +8,20 @@ using Serilog;
 
 try
 {
-    Console.WriteLine("DOTNET_ENVIRONMENT: " + Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"));
-
-    var configuration = new ConfigurationBuilder()
-        .SetBasePath(Environment.CurrentDirectory)
-        .AddJsonFile("appsettings.json", optional: true)
-        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")}.json", optional: true)
-        .Build();
-
     var builder = WebApplication.CreateBuilder(args);
     builder.AddSerilog("Worker MassTransit");
     Log.Information("Starting Worker");
+    Log.Information("DOTNET_ENVIRONMENT: " + Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"));
+
+    builder.Configuration
+           .AddJsonFile($"/app/appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+           .AddJsonFile("/config/appsettings.json", optional: true, reloadOnChange: true)
+           .Build();
+
+    foreach (var kvp in builder.Configuration.AsEnumerable())
+    {
+        Log.Debug($"{kvp.Key} = {kvp.Value}");
+    }
 
     var host = Host.CreateDefaultBuilder(args)
         .UseSerilog(Log.Logger)
@@ -26,7 +29,7 @@ try
         {
             AppSettings appSettings = new AppSettings();
             context.Configuration.Bind(appSettings);
-            context.Configuration.Bind(configuration);
+
             collection.AddOpenTelemetry(appSettings);
             collection.AddHttpContextAccessor();
 
@@ -43,7 +46,7 @@ try
 
                 x.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.Host(context.Configuration.GetConnectionString("RabbitMq"));
+                    cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
                     cfg.UseDelayedMessageScheduler();
                     //cfg.ConnectReceiveObserver(new ReceiveObserverExtensions());
                     cfg.ServiceInstance(instance =>
