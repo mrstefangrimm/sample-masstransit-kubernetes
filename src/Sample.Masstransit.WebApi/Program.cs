@@ -4,33 +4,23 @@ using Serilog;
 
 try
 {
-    Console.WriteLine("ASPNETCORE_ENVIRONMENT: " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
-
     var builder = WebApplication.CreateBuilder(args);
     builder.AddSerilog("API MassTransit");
     Log.Information("Starting API");
+    Log.Information("ASPNETCORE_ENVIRONMENT: " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
 
-    IConfiguration? configuration = null;
-
-    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "kubernetes")
-    {
-      configuration = new ConfigurationBuilder()
-          .AddJsonFile("/app/appsettings.json", optional: true)
-          .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
-          .Build();
-    }
-    else
-    {
-    configuration = new ConfigurationBuilder()
-            //.SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile("/app/appsettings.json", optional: true)
-            .AddJsonFile($"/app/appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
-            .Build();
-    }
+    builder.Configuration
+        .AddJsonFile($"/app/appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+        .AddJsonFile("/config/appsettings.json", optional: true, reloadOnChange: true)
+        .Build();
 
     var appSettings = new AppSettings();
-        builder.Configuration.Bind(appSettings);
-        builder.Configuration.Bind(configuration);
+    builder.Configuration.Bind(appSettings);
+
+    foreach (var kvp in builder.Configuration.AsEnumerable())
+    {
+        Log.Debug($"{kvp.Key} = {kvp.Value}");
+    }
 
     builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -65,14 +55,3 @@ finally
     Log.Information("Server Shutting down...");
     Log.CloseAndFlush();
 }
-
-//static IHostBuilder CreateHostBuilder(string[] args) =>
-//    Host.CreateDefaultBuilder(args)
-//        .ConfigureAppConfiguration((context, config) =>
-//        {
-//            config.AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: false);
-//        })
-//        .ConfigureWebHostDefaults(webBuilder =>
-//        {
-//            webBuilder.UseStartup<Startup>();
-//        });

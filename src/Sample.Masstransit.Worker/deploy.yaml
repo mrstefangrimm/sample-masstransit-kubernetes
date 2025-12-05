@@ -16,7 +16,7 @@ spec:
         app: masstransit-worker
     spec:
       containers:
-        - image: mrstefangrimm/masstransit-worker:0.5
+        - image: mrstefangrimm/masstransit-worker:latest
           name: masstransit-worker
           env:
             - name: DOTNET_ENVIRONMENT
@@ -24,7 +24,7 @@ spec:
           resources: {}
           volumeMounts:
             - name: config-volume
-              mountPath: /app/config
+              mountPath: /config
       volumes:
         - name: config-volume
           configMap:

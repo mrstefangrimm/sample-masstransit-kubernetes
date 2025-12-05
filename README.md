@@ -118,7 +118,6 @@ Test
 Required
 
 - minikube
-- docker containers rabbitmq, masstransit-webapi, masstransit-worker stopped
 
 Install
 
@@ -136,21 +135,21 @@ Install
 
 5. `kubectl create namespace sample`
 
-4. `kubectl create deployment rabbitmq --namespace=messaging --image=rabbitmq:3.13.7`
+4. `kubectl create deployment rabbitmq --namespace=messaging --image=rabbitmq:3.13.7-management`
 
    rabbitmq should be seen in Workloads/Deployments
 
-4. `kubectl create -f .\rabbitmq-service.yaml`
+4. `kubectl apply -f .\rabbitmq-service.yaml`
 
 4. `kubectl apply -f .\src\Sample.Masstransit.WebApi\configmap.yaml`
 
    webapi-appsettings-config should be visible in Config and Storage
 
-6. `kubectl create -f .\src\Sample.Masstransit.WebApi\deploy.yaml`
+6. `kubectl apply -f .\src\Sample.Masstransit.WebApi\deploy.yaml`
 
    masstransit-webapi should be seen in Workloads\Deployments
 
-7. `kubectl create -f .\src\Sample.Masstransit.WebApi\service.yaml`
+7. `kubectl apply -f .\src\Sample.Masstransit.WebApi\service.yaml`
 
    webapi should be seen in Service\Services
 
@@ -158,7 +157,7 @@ Install
 
    worker-appsettings-config should be visible in Config and Storage
 
-9. `kubectl create -f .\src\Sample.Masstransit.Worker\deploy.yaml`
+9. `kubectl apply -f .\src\Sample.Masstransit.Worker\deploy.yaml`
 
     masstransit-worker should be seen in Workloads\Deployments
     

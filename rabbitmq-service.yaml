@@ -7,8 +7,6 @@ metadata:
     app: rabbitmq
 spec:
   clusterIP: None
-  ipFamilies:
-    - IPv4
   ports:
     - name: 15671-tcp
       protocol: TCP
@@ -42,9 +40,6 @@ spec:
       protocol: TCP
       port: 5672
       targetPort: 5672
-  clusterIPs:
-    - None
   type: ClusterIP
   selector:
     app: rabbitmq
-    deployment: rabbitmq

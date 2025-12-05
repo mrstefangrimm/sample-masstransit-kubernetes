@@ -16,7 +16,7 @@ spec:
         app: masstransit-webapi
     spec:
       containers:
-        - image: mrstefangrimm/masstransit-webapi:0.8
+        - image: mrstefangrimm/masstransit-webapi:latest
           name: masstransit-webapi
           ports:
             - containerPort: 8080
@@ -26,7 +26,7 @@ spec:
           resources: {}
           volumeMounts:
             - name: config-volume
-              mountPath: /app/config
+              mountPath: /config
       volumes:
         - name: config-volume
           configMap:
